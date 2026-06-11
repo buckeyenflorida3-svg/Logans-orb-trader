@@ -1,163 +1,10 @@
-Cllins
-cllins_
-Online
 
-Cllins — 6/7/2026 1:42 PM
-yo u get your shit wokring
-I havent started yet
-goatified — 6/7/2026 1:46 PM
-The only thing that doesn’t work for me is the refresh token and im waiting on the indicator from za
-Cllins — 6/7/2026 1:46 PM
-what is the indicator used for
-goatified — 6/7/2026 1:49 PM
-I’m not completely sure, za just said he was gonna push a new one out bc ppl were having issues, im not actually sure if the bot needs it but im pretty sure TradingView is gonna get linked to the bot for some sort of purpose
-waiting on more details tbh
-Cllins — 6/7/2026 11:23 PM
-Ok
-Cllins — 6/9/2026 6:06 PM
-Your bot work today ?
-goatified — 6/9/2026 6:09 PM
-nah im gonna keep going at it
-idk what to do, za been busy and dealing with stuff so he aint really been to active
-Cllins — 6/9/2026 6:17 PM
-I haven’t even finished it yet tbh
-Maybe we can help eachother
-goatified — 6/9/2026 6:18 PM
-yeah fs man, i'll do what i can for ya, and tbloom sounds like he knows a decent amount of stuff
-Cllins — 6/9/2026 11:02 PM
-yo what trading view sub u giot
-goatified — 6/9/2026 11:08 PM
-essential
-Cllins — 6/9/2026 11:08 PM
-thankois
-goatified — 6/9/2026 11:09 PM
-yeah naytime
-anytime*
-Cllins — 6/9/2026 11:28 PM
-were u able to setup the trading view alerts witht that plan?
-goatified — 6/9/2026 11:46 PM
-yes
-are u having trouble
-sorry im gaming with mu buddies for my bday a little lol
-Cllins — 6/9/2026 11:47 PM
-All good bro
-theres a drone on u
-goatified — 6/9/2026 11:47 PM
-lmaooooo
-probably
-Cllins — 6/9/2026 11:49 PM
-fuck iot
-goatified — Yesterday at 11:29 AM
-did you get it working
-Cllins — Yesterday at 11:29 AM
-Nah
-goatified — Yesterday at 11:38 AM
-imma try to fix mine, this shouldn't be this much of a battle lmaoooo
-goatified — 12:21 AM
-Forwarded
-Alright yall. If you’re having problems and you downloaded all the files and started setting this all up last week. I would just go through the pain of it and replace all of the files I get hub with the most up-to-date one from Whop. EXCEPT THESE 2 files!!! @everyone 
-@ZaTradeGod modified the Robinhood.JS file today and he modified the Robinhood.js file yesterday.
 var rh = require("./robinhood");
 var stateModule = require("./state");
 
 var pendingWorkflow = null;
 
 async function validateWhopLicense() {
- var licenseKey = process.env.WHOP_LICENSE_KEY;
- var apiKey = process.env.WHOP_API_KEY;
- if (!licenseKey) {
-stateModule.logEvent("LICENSE_ERROR", "WHOP_LICENSE_KEY not set — trading disabled");
-return false;
- }
- // Accept T- format keys
- if (licenseKey.startsWith("T-") && licenseKey.length > 10) {
-stateModule.logEvent("LICENSE_OK", "Whop T- key accepted");
-return true;
- }
- // Accept MEM- format keys
- if (licenseKey.startsWith("MEM-") && licenseKey.length > 10) {
-stateModule.logEvent("LICENSE_OK", "Whop MEM- key accepted");
-return true;
- }
- if (!apiKey) {
-stateModule.logEvent("LICENSE_ERROR", "WHOP_API_KEY not set — trading disabled");
-return false;
- }
- try {
-var https = require("https");
-var result = await new Promise((resolve, reject) => {
-var options = {
-hostname: "api.whop.com",
-path: "/api/v2/memberships/validate_license",
-method: "POST",
-headers: {
-"Authorization": "Bearer " + apiKey,
-"Content-Type": "application/json"
-}
-};
-var body = JSON.stringify({ license_key: licenseKey });
-options.headers["Content-Length"] = Buffer.byteLength(body);
-var req = https.request(options, (res) => {
-var raw = "";
-res.on("data", chunk => raw += chunk);
-res.on("end", () => {
-try { resolve(JSON.parse(raw)); } catch(e) { resolve({ raw }); }
-});
-});
-req.on("error", reject);
-req.write(body);
-req.end();
-});
-stateModule.logEvent("LICENSE_DEBUG", "Whop response: " + JSON.stringify(result));
-if (result.valid === true) {
-stateModule.logEvent("LICENSE_OK", "Whop license valid");
-return true;
-}
-if (result.status === "active" || result.status === "trialing") {
-stateModule.logEvent("LICENSE_OK", "Whop membership active");
-return true;
-}
-stateModule.logEvent("LICENSE_INVALID", "Invalid license: " + JSON.stringify(result));
-return false;
- } catch(err) {
-stateModule.logEvent("LICENSE_ERROR", "License check failed: " + err.message);
-return false;
- }
-}
-
-async function refreshAccessToken() {
- var refreshToken = process.env.RH_REFRESH_TOKEN;
- if (!refreshToken) return false;
- try {
-stateModule.logEvent("AUTH", "Refreshing access token...");
-var result = await rh.refreshToken(refreshToken);
-if (result.ok) {
-stateModule.logEvent("AUTH", "Token refreshed successfully");
-return true;
-}
-stateModule.logEvent("AUTH_ERROR", "Token refresh failed: " + result.error);
-return false;
- } catch(err) {
-stateModule.logEvent("AUTH_ERROR", "Token refresh error: " + err.message);
-return false;
- }
-}
-
-async function ensureLoggedIn() {
- if (rh.getToken()) {
-stateModule.logEvent("AUTH", "Already logged in");
-return true;
- }
-
- // Try refresh token first
- var refreshToken = process.env.RH_REFRESH_TOKEN;
- if (refreshToken) {
-var refreshed = await refreshAccessToken();
-if (refreshed) return true;
- }
-
- // Fall back to stored access token
-... (106 lines left)
 
 reauth.js
 8 KB
@@ -180,6 +27,18 @@ Yeah
 Instead of reauth and robinhood that are in the zip
 Cllins — 12:22 AM
 no let me try
+goatified — 12:23 AM
+Bet
+Cllins — 12:24 AM
+What variables will i need
+goatified — 12:29 AM
+these are the ones i have, david has them so i am gonna try this
+Image
+Cllins — 12:30 AM
+wtf is different in rh token and rh device token
+goatified — 12:33 AM
+rh token is like the really long one that starts with ey
+device token is the one that has dashes in it and is kind of short
 ﻿
 goatified
 goatifiedd
