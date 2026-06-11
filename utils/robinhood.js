@@ -99,7 +99,11 @@ async function login(email, password, mfa_code) {
 
 async function handleVerificationWorkflow(deviceToken, workflowId) {
   const pathfinderUrl = "/pathfinder/user_machine/";
-  const machinePayload = { device_id: deviceToken, flow: "suv", input: { workflow_id: workflowId } };
+  const machinePayload = {
+    device_id: deviceToken,
+    flow: "suv",
+    input: { workflow_id: workflowId }
+  };
   const machineData = await request("POST", pathfinderUrl, machinePayload, null, "json");
   const machineId = machineData.id;
   if (!machineId) throw new Error("No machine ID from pathfinder");
@@ -109,7 +113,12 @@ async function handleVerificationWorkflow(deviceToken, workflowId) {
     const inquiry = await request("GET", `/pathfinder/inquiries/${machineId}/user_view/`, null, null, "json");
     if (inquiry && inquiry.context && inquiry.context.sheriff_challenge) {
       const challenge = inquiry.context.sheriff_challenge;
-      return { challenge_type: challenge.type, challenge_id: challenge.id, challenge_status: challenge.status, machine_id: machineId };
+      return {
+        challenge_type: challenge.type,
+        challenge_id: challenge.id,
+        challenge_status: challenge.status,
+        machine_id: machineId
+      };
     }
   }
   throw new Error("Verification timeout");
